@@ -19,7 +19,7 @@ RtcDS3231<SoftwareWire> Rtc(myWire);
 RtcDS3231<TwoWire> Rtc(Wire);
 /* for normal hardware wire use above */
 
-int rele = 12;
+int rele = 8;
 
 void setup () 
 {
@@ -123,12 +123,6 @@ void loop ()
     delay(500);
     digitalWrite(rele, LOW);
     delay(500);
-
-  RtcTemperature temp = Rtc.GetTemperature();
-  temp.Print(Serial);
-  // you may also get the temperature as a float and print it
-    // Serial.print(temp.AsFloatDegC());
-    Serial.println("C");
 
     delay(1000); // ten seconds
 }
