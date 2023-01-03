@@ -6,7 +6,7 @@
 
 #include <stdint.h>
 
-#define SOLO ADC0
+#define SOLO PC0
 
 //===============================================
 //  VARIAVEIS
