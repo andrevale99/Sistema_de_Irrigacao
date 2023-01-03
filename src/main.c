@@ -45,6 +45,7 @@ uint16_t adc_conv(uint8_t pino);
 int main()
 {
     setup();
+    sei();
 
     for(;;)
     {
