@@ -7,6 +7,7 @@
 #include <stdint.h>
 
 #define SOLO PC0
+#define RELE PB0
 
 //===============================================
 //  VARIAVEIS
@@ -39,7 +40,7 @@ int main()
 //===============================================
 void setup()
 {
-    DDRB |= (1<<PB5);
+    DDRB |= (1<<RELE) | (1<<PB5);
 
     ADCSRA |= (1<<ADEN) | (1<<ADPS2) 
               | (1<<ADPS1) | (1<<ADPS0);
