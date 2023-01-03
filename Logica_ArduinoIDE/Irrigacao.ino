@@ -9,12 +9,16 @@
 #include <ThreeWire.h>  
 #include <RtcDS1302.h>
 
+int rele = 12;
+
 ThreeWire myWire(2,15,4); // IO, SCLK, CE
 RtcDS1302<ThreeWire> Rtc(myWire);
 
 void setup () 
 {
     Serial.begin(57600);
+
+    pinMode(rele, OUTPUT);
 
     Serial.print("compiled: ");
     Serial.print(__DATE__);
@@ -61,7 +65,12 @@ void loop ()
     printDateTime(now);
     Serial.println();
 
-    delay(1000); // ten seconds
+    digitalWrite(rele, HIGH);
+    delay(250);
+    digitalWrite(rele, LOW);
+    delay(250);
+
+    delay(500); // ten seconds
 }
 
 #define countof(a) (sizeof(a) / sizeof(a[0]))
@@ -82,15 +91,3 @@ void printDateTime(const RtcDateTime& dt)
     Serial.print(datestring);
 }
 
-int rele = 12;
-
-void setup() {
- pinMode(rele, OUTPUT);
-}
-
-void loop() {
- digitalWrite(rele, HIGH);
- delay(5000);
- digitalWrite(rele, LOW);
- delay(5000);
-}
