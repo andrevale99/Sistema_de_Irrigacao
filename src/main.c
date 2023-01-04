@@ -45,11 +45,11 @@ uint16_t adc_conv(uint8_t pino);
 int main()
 {
     setup();
-    sei();
 
     for(;;)
     {
-        
+        PORTB ^= (1<<PB5);
+        _delay_ms(250);
     }
 
     return 0;
