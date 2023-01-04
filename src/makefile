@@ -1,4 +1,5 @@
 FILENAME   = main
+
 PORT       = /dev/ttyUSB0
 DEVICE     = atmega328p
 PROGRAMMER = arduino
@@ -22,6 +23,6 @@ upload:
 	avrdude -v -p $(DEVICE) -c $(PROGRAMMER) -P $(PORT) -b $(BAUD) -U flash:w:$(FILENAME).hex:i
 
 clean:
-	rm *.o
-	rm *.elf
-	rm *.hex
+	@rm *.o
+	@rm *.elf
+	@rm *.hex
