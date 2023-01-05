@@ -7,3 +7,4 @@ void i2c_init()
     TWSR |= 0x01;//prescaler = 4;
     TWCR = (1<<TWINT)|(1<<TWEN)|(1<<TWIE); //habilita o TWI e a interrupção
 }
+
