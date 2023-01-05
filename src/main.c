@@ -42,7 +42,7 @@ void setup();
 void gpio_setup();
 
 void adc_setup();
-uint16_t adc_conv(uint8_t pino);
+uint16_t adc_read(uint8_t pino);
 
 void USART_Init(unsigned int ubrr);
 void USART_Transmit(unsigned char data);
@@ -106,7 +106,7 @@ void adc_setup()
  * @note Retorna um valor de 16 bits pela facilidade,
  * ja que a resolucao do arduino e de 10 bits
 */
-uint16_t adc_conv(uint8_t pino)
+uint16_t adc_read(uint8_t pino)
 {
     static uint8_t adc_LSB; 
     static uint8_t adc_MSB;
