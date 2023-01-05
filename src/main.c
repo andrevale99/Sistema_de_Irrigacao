@@ -44,8 +44,8 @@ void gpio_setup();
 void adc_setup();
 uint16_t adc_conv(uint8_t pino);
 
-void USART_Transmit(unsigned char data); //Eniva caractere para a uart
-void USART_Init(unsigned int ubrr); //Inicializa a UART
+void USART_Init(unsigned int ubrr);
+void USART_Transmit(unsigned char data);
 
 //===============================================
 //  MAIN
@@ -56,7 +56,7 @@ int main()
 
     for(;;)
     {
-  
+    
     }
 
     return 0;
@@ -65,6 +65,9 @@ int main()
 //===============================================
 //  FUNCOES
 //===============================================
+/**
+ * @brief Inicializacao dos pinos e protocolos
+*/
 void setup()
 {
     gpio_setup();
@@ -72,13 +75,21 @@ void setup()
     adc_setup();
 
     i2c_init();
+
+    USART_Init(MYUBRR);
 }
 
+/**
+ * @brief Inicializacao dos pinos
+*/
 void gpio_setup()
 {
     DDRB |= (1<<RELE) | (1<<PB5);
 }
 
+/**
+ * @brief Inicializacao do ADC
+*/
 void adc_setup()
 {
     ADCSRA |= (1<<ADEN) | (1<<ADPS2) 
@@ -87,6 +98,14 @@ void adc_setup()
     ADMUX |= (1<<REFS0);
 }
 
+/**
+ * @brief Funcao para pegar o valor do adc
+ * @param pino Pino que deseja ler
+ * @return Valor da conversao ADC em um valor de 16 bits
+ * 
+ * @note Retorna um valor de 16 bits pela facilidade,
+ * ja que a resolucao do arduino e de 10 bits
+*/
 uint16_t adc_conv(uint8_t pino)
 {
     static uint8_t adc_LSB; 
@@ -107,6 +126,12 @@ uint16_t adc_conv(uint8_t pino)
     return (adc_MSB<<8) | adc_LSB;
 }
 
+/**
+ * @brief Inicializacao do USART
+ * @param ubrr Valor calculado do baud rate
+ * 
+ * @note A definicao MYUBRR ja faz o calculo (datasheet)
+*/
 void USART_Init(unsigned int ubrr)
 {
     /*Set baud rate */
@@ -118,6 +143,10 @@ void USART_Init(unsigned int ubrr)
     UCSR0C = (1<<USBS0)|(3<<UCSZ00);
 }
 
+/**
+ * @brief Transmissao de um byte pelo USART0
+ * @param data caractere
+*/
 void USART_Transmit(unsigned char data)
 {
     /* Wait for empty transmit buffer */
