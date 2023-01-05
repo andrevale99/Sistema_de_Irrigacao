@@ -1,6 +1,6 @@
 #include "i2c_lib.h"
 
-inline void i2c_init()
+void i2c_init()
 {
     //Ajuste da frequência de trabalho - SCL = F_CPU/(16+2.TWBR.Prescaler)
     TWBR = 18;
@@ -8,7 +8,7 @@ inline void i2c_init()
     TWCR = (1<<TWINT) | (1<<TWSTA) | (1<<TWEN); //habilita o TWI
 }
 
-inline void i2c_init_pullup()
+void i2c_init_pullup()
 {
     I2C_DDR  &= ~((1<<SCL) | (1<<SDA));
     I2C_PORT |= (1<<SCL) | (1<<SDA);
@@ -16,12 +16,12 @@ inline void i2c_init_pullup()
     i2c_init(); 
 }
 
-inline void i2c_unit()
+void i2c_unit()
 {
     TWCR &= ~(1<<TWEN);
 }
 
-inline void i2c_start_bit()
+void i2c_start_bit()
 {
     TWCR = (1<<TWINT) | (1<<TWSTA) | (1<<TWEN);
 }

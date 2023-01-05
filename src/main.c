@@ -53,6 +53,8 @@ void USART_Transmit(unsigned char data);
 int main()
 {
     setup();
+
+    i2c_start_bit();
     
     for(;;)
     {
