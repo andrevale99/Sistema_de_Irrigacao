@@ -53,10 +53,9 @@ void USART_Transmit(unsigned char data);
 int main()
 {
     setup();
-
+    
     for(;;)
     {
-    
     }
 
     return 0;
