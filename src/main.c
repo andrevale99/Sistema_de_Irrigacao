@@ -22,8 +22,12 @@
 
 #include <stdint.h>
 
+#include "i2c_lib.h"
+
 #define SOLO PC0
 #define RELE PB0
+#define SCL PC5
+#define SDA PC4
 
 //===============================================
 //  VARIAVEIS
@@ -35,6 +39,10 @@ uint8_t adc_MSB = 0x00;
 //  PROTOTIPOS
 //===============================================
 void setup();
+
+void gpio_setup();
+
+void adc_setup();
 uint16_t adc_conv(uint8_t pino);
 
 //===============================================
@@ -57,8 +65,21 @@ int main()
 //===============================================
 void setup()
 {
-    DDRB |= (1<<RELE) | (1<<PB5);
+    gpio_setup();
 
+    adc_setup();
+
+    i2c_init();
+}
+
+void gpio_setup()
+{
+    DDRB |= (1<<RELE) | (1<<PB5);
+    DDRC |= (1<<SCL) | (1<<SDA);
+}
+
+void adc_setup()
+{
     ADCSRA |= (1<<ADEN) | (1<<ADPS2) 
               | (1<<ADPS1) | (1<<ADPS0);
         
@@ -81,3 +102,12 @@ uint16_t adc_conv(uint8_t pino)
 
     return (adc_MSB<<8) | adc_LSB;
 }
+
+//===============================================
+//  INTERRUPCAO
+//===============================================
+ISR(TWI_vect)
+{
+
+}
+
