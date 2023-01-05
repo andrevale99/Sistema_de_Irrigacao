@@ -17,5 +17,7 @@ void i2c_init();
 void i2c_init_pullup();
 void i2c_unit();
 
+void i2c_start_bit();
+
 
 #endif

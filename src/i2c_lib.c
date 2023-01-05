@@ -5,7 +5,7 @@ void i2c_init()
     //Ajuste da frequência de trabalho - SCL = F_CPU/(16+2.TWBR.Prescaler)
     TWBR = 18;
     TWSR |= 0x01;//prescaler = 4;
-    TWCR = (1<<TWINT)|(1<<TWEN)|(1<<TWIE); //habilita o TWI e a interrupção
+    TWCR = (1<<TWINT) | (1<<TWSTA) | (1<<TWEN); //habilita o TWI
 }
 
 void i2c_init_pullup()
@@ -21,3 +21,7 @@ void i2c_unit()
     TWCR &= ~(1<<TWEN);
 }
 
+void i2c_start_bit()
+{
+    TWCR = (1<<TWINT) | (1<<TWSTA) | (1<<TWEN)
+}
