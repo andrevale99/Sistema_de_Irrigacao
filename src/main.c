@@ -26,8 +26,6 @@
 
 #define SOLO PC0
 #define RELE PB0
-#define SCL PC5
-#define SDA PC4
 
 //===============================================
 //  VARIAVEIS
@@ -75,7 +73,6 @@ void setup()
 void gpio_setup()
 {
     DDRB |= (1<<RELE) | (1<<PB5);
-    DDRC |= (1<<SCL) | (1<<SDA);
 }
 
 void adc_setup()
