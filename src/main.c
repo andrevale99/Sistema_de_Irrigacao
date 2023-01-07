@@ -33,7 +33,7 @@
 //===============================================
 //  VARIAVEIS
 //===============================================
-extern unsigned char dia;
+
 //===============================================
 //  PROTOTIPOS
 //===============================================
@@ -46,26 +46,17 @@ uint16_t adc_read(uint8_t pino);
 
 void USART_Init(unsigned int ubrr);
 void USART_Transmit(unsigned char data);
-
 //===============================================
 //  MAIN
 //===============================================
 int main()
 {
     setup();
-    sei();
-
-    i2c_start_bit();
+    //sei();
+    
     for(;;)
     {
-        if((TWCR & (1<<TWSTO)))
-        {
-            TWCR &= ~(1<<TWSTO);
-            i2c_start_bit();
-        }
-        USART_Transmit(dia);
-        USART_Transmit('\n');
-        _delay_ms(1000);
+        
     }
 
     return 0;
