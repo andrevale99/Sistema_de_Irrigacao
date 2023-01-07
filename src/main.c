@@ -22,7 +22,7 @@
 
 #include <stdint.h>
 
-#include "i2c_lib.h"
+#include "ds3231.h"
 
 #define SOLO PC0
 #define RELE PB0
@@ -33,7 +33,7 @@
 //===============================================
 //  VARIAVEIS
 //===============================================
-
+extern unsigned char dia;
 //===============================================
 //  PROTOTIPOS
 //===============================================
@@ -53,11 +53,19 @@ void USART_Transmit(unsigned char data);
 int main()
 {
     setup();
+    sei();
 
     i2c_start_bit();
-    
     for(;;)
     {
+        if((TWCR & (1<<TWSTO)))
+        {
+            TWCR &= ~(1<<TWSTO);
+            i2c_start_bit();
+        }
+        USART_Transmit(dia);
+        USART_Transmit('\n');
+        _delay_ms(1000);
     }
 
     return 0;
