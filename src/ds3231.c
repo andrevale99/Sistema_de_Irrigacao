@@ -35,32 +35,32 @@ void i2c_stop_bit()
 ISR(TWI_vect)
 {
 
-    switch(TWSR & 0xF8)
+    switch(TWSR & TW_STATUS_MASK)
     {
-        case 0x08:
+        case TW_START:
 
             TWDR = DS3231_ADDRESS | WRITE;
             TWCR &= ~(1<<TWSTA);
             break;
 
-        case 0x18:
+        case TW_MT_SLA_ACK:
             TWDR = 0x00;
             break;
 
-        case 0x28:
+        case TW_MT_DATA_ACK:
             TWCR |= (1<<TWSTA);
             break;
 
-        case 0x10:
+        case TW_REP_START:
             TWDR = DS3231_ADDRESS | READ;
             TWCR &= ~(1<<TWSTA);
             break;
 
-        case 0x40:
+        case TW_MR_SLA_ACK:
             TWCR &=~(1<<TWEA);
             break;
 
-        case 0x58:
+        case TW_MR_DATA_NACK:
             TWCR |= (1<<TWSTO);
             //deveria pegar algum dado aqui (Variavel = TWDR)
             break;

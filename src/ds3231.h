@@ -19,9 +19,6 @@
 #define SCL PC5
 #define SDA PC4
 
-#define READ 0x01
-#define WRITE 0x00
-
 #define DS3231_ADDRESS 0xD0
 
 void i2c_init();
