@@ -1,6 +1,13 @@
 #include "ds3231.h"
 
-unsigned char  s;
+struct _ds3231
+{
+    volatile uint8_t s;
+    volatile uint8_t min;
+    volatile uint8_t h;
+}ds3231;
+
+volatile uint8_t addr = 0x00;
 
 void i2c_init()
 {
@@ -34,6 +41,27 @@ void i2c_stop_bit()
     TWCR |= ((1<<TWINT) | (1<<TWSTO) | (1<<TWEN)) & ~(1<<TWSTA);
 }
 
+void ler_DS3231()
+{
+    i2c_start_bit();
+    addr =0x00;
+}
+
+uint8_t get_seconds()
+{
+    return ds3231.s;
+}
+
+uint8_t get_minutes()
+{
+    return ds3231.min;
+}
+
+uint8_t get_hours()
+{
+    return ds3231.h;
+}
+
 ISR(TWI_vect)
 {
 
@@ -46,7 +74,7 @@ ISR(TWI_vect)
             break;
 
         case TW_MT_SLA_ACK:
-            TWDR = 0x00;
+            TWDR = addr;
             break;
 
         case TW_MT_DATA_ACK:
@@ -63,10 +91,11 @@ ISR(TWI_vect)
             break;
 
         case TW_MR_DATA_NACK:
-            TWCR |= (1<<TWSTO);
-            PORTB |= (1<<PB0);
-            s = TWDR;
-            //deveria pegar algum dado aqui (Variavel = TWDR)
+            i2c_stop_bit();
+            if(addr == 0x00)
+                ds3231.s = TWDR;
+            if(addr == 0x01)
+                ds3231.min = TWDR;
             break;
 
         default:

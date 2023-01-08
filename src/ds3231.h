@@ -13,6 +13,9 @@
 #include <util/twi.h> 
 #include <avr/interrupt.h>
 
+#include <stdint.h>
+#include <stdbool.h>
+
 #define I2C_DDR DDRC
 #define I2C_PORT PORTC
 
@@ -27,6 +30,11 @@ void i2c_unit();
 
 void i2c_start_bit();
 void i2c_stop_bit();
+
+void ler_DS3231();
+uint8_t get_seconds();
+uint8_t get_minutes();
+uint8_t get_hours();
 
 ISR(TWI_vect);
 
