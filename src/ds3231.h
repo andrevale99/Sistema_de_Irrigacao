@@ -16,22 +16,11 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define I2C_DDR DDRC
-#define I2C_PORT PORTC
-
-#define SCL PC5
-#define SDA PC4
+#include "i2c_lib.h"
 
 #define DS3231_ADDRESS 0xD0
 
-void i2c_init();
-void i2c_init_pullup();
-void i2c_unit();
-
-void i2c_start_bit();
-void i2c_stop_bit();
-
-void ler_DS3231();
+void ler_DS3231(uint8_t _addr);
 uint8_t get_seconds();
 uint8_t get_minutes();
 uint8_t get_hours();
