@@ -53,14 +53,11 @@ int main()
 {
     setup();
     sei();
-
-    i2c_init();
-    
+  
     for(;;)
     {
-        i2c_start_bit();
-        USART_Transmit(s);
-        USART_Transmit('\n');
+        ler_DS3231();
+        USART_Transmit(get_seconds());
     }
 
     return 0;
