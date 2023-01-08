@@ -21,7 +21,9 @@
 #include <util/twi.h> 
 
 #include <stdint.h>
+#include <string.h>
 
+#include "i2c_lib.h"
 #include "ds3231.h"
 
 #define SOLO PC0
@@ -53,11 +55,12 @@ int main()
 {
     setup();
     sei();
-    
-    ler_DS3231();
 
     for(;;)
     {
+        ler_DS3231(0x01);
+        USART_Transmit(get_minutes());
+        USART_Transmit('\n');
     }
 
     return 0;

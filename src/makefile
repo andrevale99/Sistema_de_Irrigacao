@@ -1,5 +1,6 @@
 MAIN   = main
 DS3231_LIB = ds3231
+I2C_LIB = i2c_lib
 
 PORT       = /dev/ttyUSB0
 DEVICE     = atmega328p
@@ -17,7 +18,8 @@ default: compile upload clean
 compile:
 	$(COMPILE) -c $(MAIN).c -o $(MAIN).o
 	$(COMPILE) -c $(DS3231_LIB).c -o $(DS3231_LIB).o
-	$(COMPILE) -o $(MAIN).elf $(MAIN).o $(DS3231_LIB).o
+	$(COMPILE) -c $(I2C_LIB).c -o $(I2C_LIB).o
+	$(COMPILE) -o $(MAIN).elf $(MAIN).o $(DS3231_LIB).o $(I2C_LIB).o
 	avr-objcopy -j .text -j .data -O ihex $(MAIN).elf $(MAIN).hex 
 	avr-size --format=avr --mcu=$(DEVICE) $(MAIN).elf
 
