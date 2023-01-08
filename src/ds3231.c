@@ -8,6 +8,7 @@ struct _ds3231
 }ds3231;
 
 volatile uint8_t addr = 0x00;
+volatile bool opr_complete = false;
 
 void i2c_init()
 {
@@ -44,7 +45,7 @@ void i2c_stop_bit()
 void ler_DS3231()
 {
     i2c_start_bit();
-    addr =0x00;
+    addr = 0x00;
 }
 
 uint8_t get_seconds()
@@ -92,10 +93,8 @@ ISR(TWI_vect)
 
         case TW_MR_DATA_NACK:
             i2c_stop_bit();
-            if(addr == 0x00)
-                ds3231.s = TWDR;
-            if(addr == 0x01)
-                ds3231.min = TWDR;
+            ds3231.s = TWDR;
+            PORTB |= (1<<PB5);
             break;
 
         default:
