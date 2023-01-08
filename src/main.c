@@ -53,11 +53,11 @@ int main()
 {
     setup();
     sei();
-  
+    
+    ler_DS3231();
+
     for(;;)
     {
-        ler_DS3231();
-        USART_Transmit(get_seconds());
     }
 
     return 0;
