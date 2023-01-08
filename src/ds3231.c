@@ -39,7 +39,7 @@ ISR(TWI_vect)
     {
         case TW_START:
 
-            TWDR = DS3231_ADDRESS | WRITE;
+            TWDR = DS3231_ADDRESS | TW_WRITE;
             TWCR &= ~(1<<TWSTA);
             break;
 
@@ -52,7 +52,7 @@ ISR(TWI_vect)
             break;
 
         case TW_REP_START:
-            TWDR = DS3231_ADDRESS | READ;
+            TWDR = DS3231_ADDRESS | TW_READ;
             TWCR &= ~(1<<TWSTA);
             break;
 
