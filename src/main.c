@@ -56,11 +56,10 @@ int main()
     setup();
     sei();
 
+    ler_DS3231(0x00);
     for(;;)
     {
-        ler_DS3231(0x01);
-        USART_Transmit(get_minutes());
-        USART_Transmit('\n');
+        
     }
 
     return 0;
