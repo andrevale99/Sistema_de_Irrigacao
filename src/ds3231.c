@@ -1,5 +1,7 @@
 #include "ds3231.h"
 
+unsigned char  s;
+
 void i2c_init()
 {
     I2C_DDR  &= ~((1<<SCL) | (1<<SDA));
@@ -62,6 +64,8 @@ ISR(TWI_vect)
 
         case TW_MR_DATA_NACK:
             TWCR |= (1<<TWSTO);
+            PORTB |= (1<<PB0);
+            s = TWDR;
             //deveria pegar algum dado aqui (Variavel = TWDR)
             break;
 
