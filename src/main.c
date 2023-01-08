@@ -33,7 +33,7 @@
 //===============================================
 //  VARIAVEIS
 //===============================================
-
+extern unsigned char  s;
 //===============================================
 //  PROTOTIPOS
 //===============================================
@@ -52,11 +52,15 @@ void USART_Transmit(unsigned char data);
 int main()
 {
     setup();
-    //sei();
+    sei();
+
+    i2c_init();
     
     for(;;)
     {
-        
+        i2c_start_bit();
+        USART_Transmit(s);
+        USART_Transmit('\n');
     }
 
     return 0;
