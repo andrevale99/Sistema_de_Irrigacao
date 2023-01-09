@@ -20,7 +20,7 @@
 
 #define DS3231_ADDRESS 0xD0
 
-void ler_DS3231(uint8_t _addr);
+void ler_DS3231();
 uint8_t get_seconds();
 uint8_t get_minutes();
 uint8_t get_hours();

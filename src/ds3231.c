@@ -10,7 +10,7 @@ volatile bool opr_complete = false;
 
 volatile uint8_t idx = 0;
 
-void ler_DS3231(uint8_t _addr)
+void ler_DS3231()
 {
     for(idx = 0; idx < 0x03; ++idx)
     {
