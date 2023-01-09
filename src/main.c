@@ -13,7 +13,6 @@
  *  e Marco V. M. Villaca
  * 
  *  1.Criar logica do LCD
- *  2.Criar logica para requisitar as horas a cada 30 s
  *  3.Criar logica do rele para ativas as 6 e 18 horas 
  *  4.Criar logica do ultrassom
  * 
