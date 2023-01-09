@@ -81,6 +81,11 @@ int main()
             refresh_horas = false;
             TIMSK1 ^= (1<<OCIE1A);
         }
+
+        if(adc_read(0x01)>900)
+            PORTD |= (1<<RELE);
+        else
+            PORTD &= ~(1<<RELE);
     }
 
     cli();
