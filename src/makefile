@@ -26,6 +26,9 @@ compile:
 upload:
 	avrdude -v -p $(DEVICE) -c $(PROGRAMMER) -P $(PORT) -b $(BAUD) -U flash:w:$(MAIN).hex:i
 
+size:
+	avr-size --format=avr --mcu=$(DEVICE) $(MAIN).elf
+
 clean:
 	@rm *.o
 	@rm *.elf
