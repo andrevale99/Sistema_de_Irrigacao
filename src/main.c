@@ -12,6 +12,11 @@
  * "AVR e Arduino: Tecnicas de Projeto" de Charles Borges de Lima
  *  e Marco V. M. Villaca
  * 
+ *  1.Criar logica do LCD
+ *  2.Criar logica para requisitar as horas a cada 30 s
+ *  3.Criar logica do rele para ativas as 6 e 18 horas 
+ *  4.Criar logica do ultrassom
+ * 
 */
 #define F_CPU 16000000UL
 
@@ -58,9 +63,11 @@ int main()
 
     for(;;)
     {
-        ler_DS3231();
-        USART_Transmit(get_seconds());
-        //USART_Transmit('\n');
+        USART_Transmit(ler_DS3231(0x02));
+        USART_Transmit(ler_DS3231(0x01));
+        USART_Transmit(ler_DS3231(0x00));
+        USART_Transmit('\n');
+        _delay_ms(500);
     }
 
     cli();
