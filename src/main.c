@@ -27,6 +27,7 @@
 
 #include <stdint.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "i2c_lib.h"
 #include "ds3231.h"
@@ -40,7 +41,10 @@
 //===============================================
 //  VARIAVEIS
 //===============================================
+volatile uint8_t ovf_secs = 0x00;
 
+volatile uint8_t horas[3] = {0,0,0};
+volatile bool refresh_horas = false;
 //===============================================
 //  PROTOTIPOS
 //===============================================
@@ -53,6 +57,10 @@ uint16_t adc_read(uint8_t pino);
 
 void USART_Init(unsigned int ubrr);
 void USART_Transmit(unsigned char data);
+
+void timer1_setup();
+
+ISR(TIMER1_COMPA_vect);
 //===============================================
 //  MAIN
 //===============================================
@@ -63,11 +71,22 @@ int main()
 
     for(;;)
     {
-        USART_Transmit(ler_DS3231(0x02));
-        USART_Transmit(ler_DS3231(0x01));
-        USART_Transmit(ler_DS3231(0x00));
+        if(refresh_horas)
+        {
+            TIMSK1 &= ~(1<<OCIE1A);
+
+            horas[0] = ler_DS3231(0x02);
+            horas[1] = ler_DS3231(0x01);
+            horas[2] = ler_DS3231(0x00);
+
+            refresh_horas = false;
+            TIMSK1 ^= (1<<OCIE1A);
+        }
+
+        USART_Transmit(horas[0]);
+        USART_Transmit(horas[1]);
+        USART_Transmit(horas[2]);
         USART_Transmit('\n');
-        _delay_ms(500);
     }
 
     cli();
@@ -89,11 +108,15 @@ void setup()
 
     i2c_init();
 
+    timer1_setup();
+
     USART_Init(MYUBRR);
 }
 
 /**
  * @brief Inicializacao dos pinos
+ * 
+ * @note Coloca os pinos PB5 e RELE(PD7) como OUTPUTs
 */
 void gpio_setup()
 {
@@ -103,6 +126,9 @@ void gpio_setup()
 
 /**
  * @brief Inicializacao do ADC
+ * 
+ * @note Ativa o ADC com o prescale de 16e6/128 e
+ * referencia no AVCC/AREF 
 */
 void adc_setup()
 {
@@ -110,6 +136,17 @@ void adc_setup()
               | (1<<ADPS1) | (1<<ADPS0);
         
     ADMUX |= (1<<REFS0);
+}
+
+/**
+ * @brief Inicializa o Timer de 16 bits
+*/
+void timer1_setup()
+{
+    TCCR1B |= (1<<WGM12) | (1<<CS12) | (1<<CS10);
+    TIMSK1 |= (1<<OCIE1A);
+
+    OCR1A = 15625;
 }
 
 /**
@@ -168,4 +205,22 @@ void USART_Transmit(unsigned char data)
         ;
     /* Put data into buffer, sends the data */
     UDR0 = data;
+}
+
+/**
+ * @brief Vetor de interrupcao para o estouro
+ * do valor MAX do time1 (16 bits)
+ * 
+ * @note A cada 5 segundos, ele libera a atualizacao
+ * das horas na main trocando a flag "refresh_horas"
+*/
+ISR(TIMER1_COMPA_vect)
+{
+    ++ovf_secs;
+    
+    if(ovf_secs==30)
+    {
+        refresh_horas = true;
+        ovf_secs = 0;
+    }
 }
