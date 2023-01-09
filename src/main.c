@@ -79,14 +79,14 @@ int main()
             horas[1] = ler_DS3231(0x01);
             horas[2] = ler_DS3231(0x00);
 
+            USART_Transmit(horas[0]);
+            USART_Transmit(horas[1]);
+            USART_Transmit(horas[2]);
+            USART_Transmit('\n');
+
             refresh_horas = false;
             TIMSK1 ^= (1<<OCIE1A);
         }
-
-        USART_Transmit(horas[0]);
-        USART_Transmit(horas[1]);
-        USART_Transmit(horas[2]);
-        USART_Transmit('\n');
     }
 
     cli();
