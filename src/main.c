@@ -56,11 +56,14 @@ int main()
     setup();
     sei();
 
-    ler_DS3231();
     for(;;)
     {
-        
+        ler_DS3231();
+        USART_Transmit(get_seconds());
+        //USART_Transmit('\n');
     }
+
+    cli();
 
     return 0;
 }
