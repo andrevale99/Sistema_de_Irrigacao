@@ -32,7 +32,7 @@
 #include "ds3231.h"
 
 #define SOLO PC0
-#define RELE PB0
+#define RELE PD7
 
 #define BAUD 9600
 #define MYUBRR F_CPU/16/BAUD-1
@@ -40,7 +40,7 @@
 //===============================================
 //  VARIAVEIS
 //===============================================
-extern unsigned char  s;
+
 //===============================================
 //  PROTOTIPOS
 //===============================================
@@ -97,7 +97,8 @@ void setup()
 */
 void gpio_setup()
 {
-    DDRB |= (1<<RELE) | (1<<PB5);
+    DDRB |= (1<<PB5);
+    DDRD |= (1<<RELE);
 }
 
 /**
