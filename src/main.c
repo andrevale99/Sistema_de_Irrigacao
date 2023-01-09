@@ -56,7 +56,7 @@ int main()
     setup();
     sei();
 
-    ler_DS3231(0x00);
+    ler_DS3231();
     for(;;)
     {
         
