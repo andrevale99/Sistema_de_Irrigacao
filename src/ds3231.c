@@ -2,7 +2,7 @@
 
 struct _ds3231
 {
-    uint8_t horas[3];
+    volatile uint8_t horas[3];
 }ds3231;
 
 volatile uint8_t addr = 0x00;
@@ -12,6 +12,7 @@ volatile uint8_t idx = 0;
 
 void ler_DS3231()
 {
+    opr_complete = false;
     for(idx = 0; idx < 0x03; ++idx)
     {
         i2c_start_bit();
