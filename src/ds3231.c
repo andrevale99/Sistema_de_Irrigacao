@@ -1,43 +1,28 @@
 #include "ds3231.h"
 
-struct _ds3231
-{
-    volatile uint8_t horas[3];
-}ds3231;
+volatile uint8_t data = 0x00;
 
 volatile uint8_t addr = 0x00;
 volatile bool opr_complete = false;
 
 volatile uint8_t idx = 0;
 
-void ler_DS3231()
+uint8_t ler_DS3231(uint8_t _addr)
 {
     opr_complete = false;
-    for(idx = 0; idx < 0x03; ++idx)
-    {
-        i2c_start_bit();
-        while(!opr_complete)
-            ;
-        opr_complete = false;
-        addr += idx;
-    }
-    PORTB |= (1<<PB0);
+    addr = _addr;
+
+    i2c_start_bit();
+    while(!opr_complete)
+        ;
+    
+    opr_complete = false;
+    
+    PORTB |= (1<<PB5);
+    
+    return data;
 }
 
-uint8_t get_seconds()
-{
-    return ds3231.horas[0];
-}
-
-uint8_t get_minutes()
-{
-    return ds3231.horas[1];
-}
-
-uint8_t get_hours()
-{
-    return ds3231.horas[2];
-}
 
 ISR(TWI_vect)
 {
@@ -69,7 +54,7 @@ ISR(TWI_vect)
 
         case TW_MR_DATA_NACK:
             i2c_stop_bit();
-            ds3231.horas[idx] = TWDR;
+            data = TWDR;
             opr_complete = true;
             break;
 
