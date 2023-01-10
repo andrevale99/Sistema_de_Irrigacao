@@ -86,6 +86,7 @@ int main()
             PORTD |= (1<<RELE);
         else
             PORTD &= ~(1<<RELE);
+
     }
 
     cli();
@@ -120,6 +121,7 @@ void setup()
 void gpio_setup()
 {
     DDRB |= (1<<PB5);
+
     DDRD |= (1<<RELE);
 }
 
@@ -139,6 +141,10 @@ void adc_setup()
 
 /**
  * @brief Inicializa o Timer de 16 bits
+ * 
+ * @note O contador tem a frequencia de 16e6/1024
+ * e com o modo de CTC com  interrupcao do 
+ * comparador do OCR1A como MAX
 */
 void timer1_setup()
 {
@@ -181,14 +187,16 @@ uint16_t adc_read(uint8_t pino)
  * @param ubrr Valor calculado do baud rate
  * 
  * @note A definicao MYUBRR ja faz o calculo (datasheet)
+ * e inicializa somento o TX, para o RX (1<<RXEN0) no
+ * registrador UCSR0B
 */
 void USART_Init(unsigned int ubrr)
 {
     /*Set baud rate */
     UBRR0H = (unsigned char)(ubrr>>8);
     UBRR0L = (unsigned char)ubrr;
-    /*Enable receiver and transmitter */
-    UCSR0B = (1<<RXEN0)|(1<<TXEN0);
+    /*Enable transmitter */
+    UCSR0B = (1<<TXEN0);
     /* Set frame format: 8data, 2stop bit */
     UCSR0C = (1<<USBS0)|(3<<UCSZ00);
 }
