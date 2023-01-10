@@ -83,7 +83,7 @@ int main()
     {
         if(refresh_horas)
         {
-            TIMSK1 &= ~(1<<OCIE1A);
+            ClrBit(TIMSK1, OCIE1A);
 
             horas[0] = ler_DS3231(0x02);
             horas[1] = ler_DS3231(0x01);
@@ -92,15 +92,15 @@ int main()
             refresh_horas = false;
 
             TCNT1 = 0;
-            TIMSK1 ^= (1<<OCIE1A);
+            ToggleBit(TIMSK1, OCIE1A);
         }
 
-        if(horas[0] == 6 || horas[0] == 18)
+        if(horas[0] > 6 || horas[0] < 18)
         {
             if(adc_read(SOLO) <= SOLO_SECO ) //IFs para verificar a umidade do solo
-                PORTD |= (1<<RELE);
+                SetBit(PORTD, RELE);
             else
-                PORTD &= ~(1<<RELE);
+                ClrBit(PORTD, RELE);
         }
 
     }
@@ -124,9 +124,9 @@ void setup()
 
     i2c_init();
 
-    timer1_setup();
-
     USART_Init(MYUBRR);
+
+    timer1_setup();
 }
 
 /**
@@ -136,9 +136,9 @@ void setup()
 */
 void gpio_setup()
 {
-    DDRB |= (1<<PB5);
+    SetBit(DDRB, PB5);
 
-    DDRD |= (1<<RELE);
+    SetBit(DDRD, RELE);
 }
 
 /**
@@ -149,10 +149,12 @@ void gpio_setup()
 */
 void adc_setup()
 {
-    ADCSRA |= (1<<ADEN) | (1<<ADPS2) 
-              | (1<<ADPS1) | (1<<ADPS0);
+    SetBit(ADCSRA, ADEN);
+    SetBit(ADCSRA, ADPS2);
+    SetBit(ADCSRA, ADPS1);
+    SetBit(ADCSRA, ADPS0);
         
-    ADMUX |= (1<<REFS0);
+    SetBit(ADMUX, REFS0);
 }
 
 /**
@@ -164,8 +166,11 @@ void adc_setup()
 */
 void timer1_setup()
 {
-    TCCR1B |= (1<<WGM12) | (1<<CS12) | (1<<CS10);
-    TIMSK1 |= (1<<OCIE1A);
+    SetBit(TCCR1B, WGM12);
+    SetBit(TCCR1B, CS12);
+    SetBit(TCCR1B, CS10);
+
+    SetBit(TIMSK1, OCIE1A);
 
     OCR1A = 15625;
 }
@@ -185,15 +190,16 @@ uint16_t adc_read(uint8_t pino)
 
     ADMUX |= pino;
 
-    ADCSRA |= (1<<ADSC);
+    SetBit(ADCSRA, ADSC);
 
     while(!(ADCSRA &= ~(1<<ADIF)));
-    ADCSRA |= (1<<ADIF); 
+
+    SetBit(ADCSRA, ADIF);
 
     adc_LSB = ADCL;
     adc_MSB = ADCH;
 
-    ADCSRA |= (1<<ADSC);
+    SetBit(ADCSRA, ADSC);
 
     return (adc_MSB<<8) | adc_LSB;
 }
@@ -212,9 +218,10 @@ void USART_Init(unsigned int ubrr)
     UBRR0H = (unsigned char)(ubrr>>8);
     UBRR0L = (unsigned char)ubrr;
     /*Enable transmitter */
-    UCSR0B = (1<<TXEN0);
+    SetBit(UCSR0B, TXEN0);
     /* Set frame format: 8data, 2stop bit */
-    UCSR0C = (1<<USBS0)|(3<<UCSZ00);
+    SetBit(UCSR0C, USBS0);
+    SetBit(UCSR0C, UCSZ00);
 }
 
 /**
