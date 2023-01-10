@@ -12,8 +12,7 @@
  * "AVR e Arduino: Tecnicas de Projeto" de Charles Borges de Lima
  *  e Marco V. M. Villaca
  * 
- *  1.Criar logica do LCD
- *  3.Criar logica do rele para ativas as 6 e 18 horas 
+ *  1.Criar logica do LCD (opcional)
  *  4.Criar logica do ultrassom
  * 
 */
@@ -95,7 +94,7 @@ int main()
             ToggleBit(TIMSK1, OCIE1A);
         }
 
-        if(horas[0] > 6 || horas[0] < 18)
+        if(horas[0] == 6 || horas[0] == 18)
         {
             if(adc_read(SOLO) <= SOLO_SECO ) //IFs para verificar a umidade do solo
                 SetBit(PORTD, RELE);
