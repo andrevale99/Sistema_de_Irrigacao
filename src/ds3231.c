@@ -18,8 +18,6 @@ uint8_t ler_DS3231(uint8_t _addr)
     
     opr_complete = false;
     
-    PORTB |= (1<<PB5);
-    
     return data;
 }
 
