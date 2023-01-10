@@ -37,6 +37,8 @@
 #define BAUD 9600
 #define MYUBRR F_CPU/16/BAUD-1
 
+#define SOLO_SECO 500
+
 //===============================================
 //  VARIAVEIS
 //===============================================
@@ -68,6 +70,10 @@ int main()
     setup();
     sei();
 
+    horas[0] = ler_DS3231(0x02);
+    horas[1] = ler_DS3231(0x01);
+    horas[2] = ler_DS3231(0x00);
+
     for(;;)
     {
         if(refresh_horas)
@@ -79,13 +85,18 @@ int main()
             horas[2] = ler_DS3231(0x00);
 
             refresh_horas = false;
+
+            TCNT1 = 0;
             TIMSK1 ^= (1<<OCIE1A);
         }
 
-        if(adc_read(0x01)>900)
-            PORTD |= (1<<RELE);
-        else
-            PORTD &= ~(1<<RELE);
+        if(horas[0] == 6 || horas[0] == 18)
+        {
+            if(adc_read(SOLO) <= SOLO_SECO ) //IFs para verificar a umidade do solo
+                PORTD |= (1<<RELE);
+            else
+                PORTD &= ~(1<<RELE);
+        }
 
     }
 
@@ -218,7 +229,7 @@ void USART_Transmit(unsigned char data)
  * @brief Vetor de interrupcao para o estouro
  * do valor MAX do time1 (16 bits)
  * 
- * @note A cada 5 segundos, ele libera a atualizacao
+ * @note A cada 30 segundos, ele libera a atualizacao
  * das horas na main trocando a flag "refresh_horas"
 */
 ISR(TIMER1_COMPA_vect)
