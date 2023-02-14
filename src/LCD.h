@@ -17,9 +17,6 @@
 #define E PB4
 #define RS PB5
 
-#define tam_vetor 5
-#define conv_ascii 48
-
 #define CLEAR_DISPLAY 0x01
 #define RETURN_HOME 0x02
 #define PULAR_LINHA 0xA0
