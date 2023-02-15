@@ -12,10 +12,15 @@
 #define CplBit(RES, BIT)(RES ^= (1 << BIT)) // Inverter estado do BIT
 
 #define DADOS_LCD PORTB
-#define nibble_dados 0
 #define CONTR_LCD PORTB
 #define E PB4
 #define RS PB5
+
+/*0 para via de dados do LCD nos 4 LSBs do PORT
+empregado (Px0-D4, Px1-D5, Px2-D6, Px3-D7), 1 para via de
+dados do LCD nos 4 MSBs do PORT empregado (Px4-D4, Px5-D5,
+Px6-D6, Px7-D7) */
+#define nibble_dados 0
 
 #define CLEAR_DISPLAY 0x01
 #define RETURN_HOME 0x02
