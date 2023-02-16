@@ -16,7 +16,7 @@
 #define CplBit(RES, BIT)(RES ^= (1 << BIT)) // Inverter estado do BIT
 
 #define DADOS_LCD PORTD
-#define CONTR_LCD PORTD
+#define CONTR_LCD PORTB
 #define E PB1
 #define RS PB0
 
