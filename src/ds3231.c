@@ -5,8 +5,6 @@ volatile uint8_t data = 0x00;
 volatile uint8_t addr = 0x00;
 volatile bool opr_complete = false;
 
-volatile uint8_t idx = 0;
-
 uint8_t ler_DS3231(uint8_t _addr)
 {
     opr_complete = false;
