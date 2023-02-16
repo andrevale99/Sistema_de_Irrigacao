@@ -16,7 +16,9 @@
  *  4.Criar logica do ultrassom
  * 
 */
-#define F_CPU 16000000UL
+#ifndef F_CPU
+    #define F_CPU 16000000UL
+#endif
 
 #include <avr/io.h>
 #include <util/delay.h>
@@ -29,6 +31,7 @@
 
 #include "i2c_lib.h"
 #include "ds3231.h"
+#include "LCD.h"
 
 #define SetBit(port, pin) (port |= (1<<pin))
 #define ClrBit(port, pin) (port &= ~(1<<pin))
@@ -126,6 +129,8 @@ void setup()
     USART_Init(MYUBRR);
 
     timer1_setup();
+
+    inic_LCD_4bits();
 }
 
 /**
