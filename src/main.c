@@ -48,6 +48,8 @@ volatile uint8_t horas[3] = {0, 0, 0};
 volatile bool refresh_horas = false;
 
 char adc_string[] = "0000";
+
+void (*function_ptr)(); //Ponteiro de função, quando haver troca de rotina
 //===============================================
 //  PROTOTIPOS
 //===============================================
@@ -63,6 +65,8 @@ void timer1_setup();
 void convert_adc(uint16_t adc);
 void reset_string(char str[]);
 
+void rotina_principal();
+
 ISR(TIMER1_COMPA_vect);
 //===============================================
 //  MAIN
@@ -76,30 +80,11 @@ int main()
     horas[1] = ler_DS3231(0x01);
     horas[2] = ler_DS3231(0x00);
 
+    function_ptr = rotina_principal;
+
     for (;;)
     {
-
-        if (refresh_horas)
-        {
-            ClrBit(TIMSK1, OCIE1A);
-
-            horas[0] = ler_DS3231(0x02);
-            horas[1] = ler_DS3231(0x01);
-            horas[2] = ler_DS3231(0x00);
-
-            refresh_horas = false;
-
-            TCNT1 = 0;
-            ToggleBit(TIMSK1, OCIE1A);
-        }
-
-        if (horas[0] == 6 || horas[0] == 18)
-        {
-            if (adc_read(SOLO) <= SOLO_SECO)
-                SetBit(PORTD, RELE);
-            else
-                ClrBit(PORTD, RELE);
-        }
+        (*function_ptr)();
     }
 
     cli();
@@ -187,7 +172,8 @@ void timer1_setup()
  * @return Valor da conversao ADC em um valor de 16 bits
  *
  * @note Retorna um valor de 16 bits pela facilidade,
- * ja que a resolucao do arduino e de 10 bits
+ * ja que a resolucao do arduino e de 10 bits. NAO
+ * USA INTERRUPCAO
  */
 uint16_t adc_read(uint8_t pino)
 {
@@ -240,6 +226,35 @@ void reset_string(char str[])
 }
 
 /**
+ * @brief Rotina principal, somente atualiza o tempo e
+ * ativa o rele
+*/
+void rotina_principal()
+{
+    if (refresh_horas)
+    {
+        ClrBit(TIMSK1, OCIE1A);
+
+        horas[0] = ler_DS3231(0x02);
+        horas[1] = ler_DS3231(0x01);
+        horas[2] = ler_DS3231(0x00);
+
+        refresh_horas = false;
+
+        TCNT1 = 0;
+        ToggleBit(TIMSK1, OCIE1A);
+    }
+
+    if (horas[0] == 6 || horas[0] == 18)
+    {
+        if (adc_read(SOLO) <= SOLO_SECO)
+            SetBit(PORTD, RELE);
+        else
+            ClrBit(PORTD, RELE);
+    }
+}
+
+/**
  * @brief Vetor de interrupcao para o estouro
  * do valor MAX do time1 (16 bits)
  *
@@ -250,7 +265,7 @@ ISR(TIMER1_COMPA_vect)
 {
     ++ovf_secs;
 
-    if (ovf_secs == 30)
+    if (ovf_secs == 5)
     {
         refresh_horas = true;
         ovf_secs = 0;
