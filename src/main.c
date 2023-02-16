@@ -218,6 +218,8 @@ uint16_t adc_read(uint8_t pino)
 /**
  * @brief Converte o valor adc em um
  * vetor de char
+ * 
+ * @param adc valor do adc
 */
 void convert_adc(uint16_t adc)
 {
@@ -233,6 +235,8 @@ void convert_adc(uint16_t adc)
 /**
  * @brief Reseta a string da conversao
  * do adc
+ * 
+ * @param str vetor de char para resetar
 */
 void reset_string(char str[])
 {
