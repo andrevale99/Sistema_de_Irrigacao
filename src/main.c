@@ -40,9 +40,7 @@
 
 #define SOLO PC0
 #define RELE PD2
-
-#define BAUD 9600
-#define MYUBRR F_CPU/16/BAUD-1
+#define POT PC2
 
 #define SOLO_SECO 500
 
@@ -63,9 +61,6 @@ void gpio_setup();
 void adc_setup();
 uint16_t adc_read(uint8_t pino);
 
-void USART_Init(unsigned int ubrr);
-void USART_Transmit(unsigned char data);
-
 void timer1_setup();
 
 ISR(TIMER1_COMPA_vect);
@@ -75,8 +70,6 @@ ISR(TIMER1_COMPA_vect);
 int main()
 {
     setup();
-    escreve_LCD("HELLO LCD");
-
     sei();
 
     horas[0] = ler_DS3231(0x02);
@@ -128,7 +121,9 @@ void setup()
 
     i2c_init();
 
-    USART_Init(MYUBRR);
+    //Desativa os Pinos RX e TX para serem usados
+    //como pinos normais, caso precise
+    UCSR0B |= 0x00; 
 
     timer1_setup();
 
@@ -213,39 +208,6 @@ uint16_t adc_read(uint8_t pino)
     SetBit(ADCSRA, ADSC);
 
     return (adc_MSB<<8) | adc_LSB;
-}
-
-/**
- * @brief Inicializacao do USART
- * @param ubrr Valor calculado do baud rate
- * 
- * @note A definicao MYUBRR ja faz o calculo (datasheet)
- * e inicializa somento o TX, para o RX (1<<RXEN0) no
- * registrador UCSR0B
-*/
-void USART_Init(unsigned int ubrr)
-{
-    /*Set baud rate */
-    UBRR0H = (unsigned char)(ubrr>>8);
-    UBRR0L = (unsigned char)ubrr;
-    /*Enable transmitter */
-    SetBit(UCSR0B, TXEN0);
-    /* Set frame format: 8data, 2stop bit */
-    SetBit(UCSR0C, USBS0);
-    SetBit(UCSR0C, UCSZ00);
-}
-
-/**
- * @brief Transmissao de um byte pelo USART0
- * @param data caractere
-*/
-void USART_Transmit(unsigned char data)
-{
-    /* Wait for empty transmit buffer */
-    while (!(UCSR0A & (1<<UDRE0))) 
-        ;
-    /* Put data into buffer, sends the data */
-    UDR0 = data;
 }
 
 /**
