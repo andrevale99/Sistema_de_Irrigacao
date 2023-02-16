@@ -39,7 +39,7 @@
 #define TestBit(port, pin) (port & (1<<pin))
 
 #define SOLO PC0
-#define RELE PD7
+#define RELE PD2
 
 #define BAUD 9600
 #define MYUBRR F_CPU/16/BAUD-1
@@ -75,6 +75,8 @@ ISR(TIMER1_COMPA_vect);
 int main()
 {
     setup();
+    escreve_LCD("HELLO LCD");
+
     sei();
 
     horas[0] = ler_DS3231(0x02);
@@ -141,8 +143,13 @@ void setup()
 void gpio_setup()
 {
     SetBit(DDRB, PB5);
+    SetBit(DDRB, PB0);
+    SetBit(DDRB, PB1);
 
     SetBit(DDRD, RELE);
+
+    //Inicialização da via de dados do LCD
+    DDRD |= 0xF0;
 }
 
 /**
