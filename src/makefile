@@ -1,6 +1,7 @@
 MAIN   = main
 DS3231_LIB = ds3231
 I2C_LIB = i2c_lib
+LCD = LCD
 
 PORT       = /dev/ttyUSB0
 DEVICE     = atmega328p
@@ -19,7 +20,8 @@ compile:
 	$(COMPILE) -c $(MAIN).c -o $(MAIN).o
 	$(COMPILE) -c $(DS3231_LIB).c -o $(DS3231_LIB).o
 	$(COMPILE) -c $(I2C_LIB).c -o $(I2C_LIB).o
-	$(COMPILE) -o $(MAIN).elf $(MAIN).o $(DS3231_LIB).o $(I2C_LIB).o
+	$(COMPILE) -c $(LCD).c -o $(LCD).o
+	$(COMPILE) -o $(MAIN).elf $(MAIN).o $(DS3231_LIB).o $(I2C_LIB).o $(LCD).o
 	avr-objcopy -j .text -j .data -O ihex $(MAIN).elf $(MAIN).hex 
 	avr-size --format=avr --mcu=$(DEVICE) $(MAIN).elf
 
