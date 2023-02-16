@@ -14,7 +14,7 @@
  *
  */
 #ifndef F_CPU
-    #define F_CPU 16000000UL
+#define F_CPU 16000000UL
 #endif
 
 #include <avr/io.h>
@@ -32,9 +32,10 @@
 
 #include "Utilitarios.c"
 
-#define SOLO PC0
+#define BT PC0
+#define POT PC1
+#define SOLO PC3
 #define RELE PD2
-#define POT PC2
 
 #define SOLO_SECO 500
 
@@ -46,7 +47,7 @@ volatile uint8_t ovf_secs = 0x00;
 volatile uint8_t horas[3] = {0, 0, 0};
 volatile bool refresh_horas = false;
 
-char adc_string[] = "0000"; 
+char adc_string[] = "0000";
 //===============================================
 //  PROTOTIPOS
 //===============================================
@@ -77,6 +78,7 @@ int main()
 
     for (;;)
     {
+
         if (refresh_horas)
         {
             ClrBit(TIMSK1, OCIE1A);
@@ -212,9 +214,9 @@ uint16_t adc_read(uint8_t pino)
 /**
  * @brief Converte o valor adc em um
  * vetor de char
- * 
+ *
  * @param adc valor do adc
-*/
+ */
 void convert_adc(uint16_t adc)
 {
     uint16_t i = 10;
@@ -229,9 +231,9 @@ void convert_adc(uint16_t adc)
 /**
  * @brief Reseta a string da conversao
  * do adc
- * 
+ *
  * @param str vetor de char para resetar
-*/
+ */
 void reset_string(char str[])
 {
     memcpy(str, "0000", 4);
