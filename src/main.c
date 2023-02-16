@@ -51,6 +51,8 @@ volatile uint8_t ovf_secs = 0x00;
 
 volatile uint8_t horas[3] = {0, 0, 0};
 volatile bool refresh_horas = false;
+
+char adc_string[] = "0000"; 
 //===============================================
 //  PROTOTIPOS
 //===============================================
@@ -62,6 +64,9 @@ void adc_setup();
 uint16_t adc_read(uint8_t pino);
 
 void timer1_setup();
+
+void convert_adc(uint16_t adc);
+void reset_string(char str[]);
 
 ISR(TIMER1_COMPA_vect);
 //===============================================
@@ -208,6 +213,30 @@ uint16_t adc_read(uint8_t pino)
     SetBit(ADCSRA, ADSC);
 
     return (adc_MSB << 8) | adc_LSB;
+}
+
+/**
+ * @brief Converte o valor adc em um
+ * vetor de char
+*/
+void convert_adc(uint16_t adc)
+{
+    uint16_t i = 10;
+    uint8_t idx = 3;
+    while (adc != 0)
+    {
+        adc_string[idx--] = (adc % i) + '0';
+        adc = adc / i;
+    }
+}
+
+/**
+ * @brief Reseta a string da conversao
+ * do adc
+*/
+void reset_string(char str[])
+{
+    memcpy(str, "0000", 4);
 }
 
 /**
