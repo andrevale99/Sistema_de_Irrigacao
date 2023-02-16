@@ -10,10 +10,10 @@
 
 #include <stdint.h>
 
-#define SetBit(RES, BIT)(RES |= (1 << BIT)) // Por BIT em nível alto
-#define ClrBit(RES, BIT)(RES &= ~ (1 << BIT))// Por BIT em nível baixo
-#define TstBit(RES, BIT)(RES &  (1 << BIT)) // testar BIT, retorna 0 ou 1
-#define CplBit(RES, BIT)(RES ^= (1 << BIT)) // Inverter estado do BIT
+#define SetBit(port, pin) (port |= (1<<pin))
+#define ClrBit(port, pin) (port &= ~(1<<pin))
+#define ToggleBit(port, pin) (port ^= (1<<pin))
+#define TestBit(port, pin) (port & (1<<pin))
 
 #define DADOS_LCD PORTD
 #define CONTR_LCD PORTB
