@@ -32,7 +32,7 @@
 
 #include "Utilitarios.c"
 
-#define BT PC0
+#define BT PD0
 #define POT PC1
 #define SOLO PC3
 #define RELE PD2
@@ -43,13 +43,14 @@
 //  VARIAVEIS
 //===============================================
 volatile uint8_t ovf_secs = 0x00;
+volatile uint8_t cnt = 0x00;
 
 volatile uint8_t horas[3] = {0, 0, 0};
 volatile bool refresh_horas = false;
 
 char adc_string[] = "0000";
 
-void (*function_ptr)(); //Ponteiro de função, quando haver troca de rotina
+void (*function_ptr)(); // Ponteiro de função, quando haver troca de rotina
 //===============================================
 //  PROTOTIPOS
 //===============================================
@@ -66,8 +67,10 @@ void convert_adc(uint16_t adc);
 void reset_string(char str[]);
 
 void rotina_principal();
+void rotina_config();
 
 ISR(TIMER1_COMPA_vect);
+ISR(PCINT1_vect);
 //===============================================
 //  MAIN
 //===============================================
@@ -117,8 +120,6 @@ void setup()
 
 /**
  * @brief Inicializacao dos pinos
- *
- * @note Coloca os pinos PB5 e RELE(PD7) como OUTPUTs
  */
 void gpio_setup()
 {
@@ -128,6 +129,12 @@ void gpio_setup()
 
     SetBit(DDRD, RELE);
 
+    ClrBit(DDRD, BT);
+    SetBit(PORTD, BT);
+
+    SetBit(PCICR, PCIE2);
+    SetBit(PCMSK2, PCINT17);
+
     // Inicialização da via de dados do LCD
     DDRD |= 0xF0;
 }
@@ -136,7 +143,8 @@ void gpio_setup()
  * @brief Inicializacao do ADC
  *
  * @note Ativa o ADC com o prescale de 16e6/128 e
- * referencia no AVCC/AREF
+ * referencia no AVCC/AREF. Desativa as entradas
+ * analogicas A2 e A3 para consumir menos energia
  */
 void adc_setup()
 {
@@ -146,6 +154,9 @@ void adc_setup()
     SetBit(ADCSRA, ADPS0);
 
     SetBit(ADMUX, REFS0);
+
+    SetBit(DIDR0, ADC2D);
+    SetBit(DIDR0, ADC3D);
 }
 
 /**
@@ -228,9 +239,18 @@ void reset_string(char str[])
 /**
  * @brief Rotina principal, somente atualiza o tempo e
  * ativa o rele
-*/
+ */
 void rotina_principal()
 {
+    escreve_LCD("PRINCIPAL");
+    cmd_LCD(RETURN_HOME, 0);
+
+    if(!TestBit(PIND, PIND0))
+    {
+        cmd_LCD(CLEAR_DISPLAY, 0);
+        function_ptr = rotina_config;
+    }
+
     if (refresh_horas)
     {
         ClrBit(TIMSK1, OCIE1A);
@@ -254,6 +274,15 @@ void rotina_principal()
     }
 }
 
+void rotina_config()
+{
+    escreve_LCD("CONF");
+    cmd_LCD(RETURN_HOME, 0);
+
+    if(TestBit(PIND, PIND0))
+        function_ptr = rotina_principal;
+}
+
 /**
  * @brief Vetor de interrupcao para o estouro
  * do valor MAX do time1 (16 bits)
@@ -270,4 +299,16 @@ ISR(TIMER1_COMPA_vect)
         refresh_horas = true;
         ovf_secs = 0;
     }
+}
+
+ISR(PCINT2_vect)
+{
+    do
+    {
+
+        escreve_LCD("PCINT2_vect");
+        cmd_LCD(RETURN_HOME, 0);
+
+    } while (!TestBit(PIND, PIND1));
+    cmd_LCD(CLEAR_DISPLAY, 0);
 }
