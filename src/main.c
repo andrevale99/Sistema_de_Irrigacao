@@ -2,18 +2,15 @@
  * @author Andre Menezes de Freitas Vale
  * @date 03/01/2023
  *
- * @version 0.0
+ * @version 1.0.1
  *
  * @brief Programa para realizar a irrigacao automatica
  * de um jardim utlizando a programacao em C e o microcontrolador
  * AVR Atmega328p
  *
- * @note A parte da programacao do RTC foi baseado no livro
+ * @note A parte da programacao do RTC e do LCD foram baseados no livro
  * "AVR e Arduino: Tecnicas de Projeto" de Charles Borges de Lima
  *  e Marco V. M. Villaca
- *
- *  1.Criar logica do LCD (opcional)
- *  4.Criar logica do ultrassom
  *
  */
 #ifndef F_CPU
