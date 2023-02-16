@@ -1,21 +1,21 @@
 /**
  * @author Andre Menezes de Freitas Vale
  * @date 03/01/2023
- * 
+ *
  * @version 0.0
- * 
+ *
  * @brief Programa para realizar a irrigacao automatica
  * de um jardim utlizando a programacao em C e o microcontrolador
  * AVR Atmega328p
- * 
+ *
  * @note A parte da programacao do RTC foi baseado no livro
  * "AVR e Arduino: Tecnicas de Projeto" de Charles Borges de Lima
  *  e Marco V. M. Villaca
- * 
+ *
  *  1.Criar logica do LCD (opcional)
  *  4.Criar logica do ultrassom
- * 
-*/
+ *
+ */
 #ifndef F_CPU
     #define F_CPU 16000000UL
 #endif
@@ -23,7 +23,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
-#include <util/twi.h> 
+#include <util/twi.h>
 
 #include <stdint.h>
 #include <string.h>
@@ -33,10 +33,10 @@
 #include "ds3231.h"
 #include "LCD.h"
 
-#define SetBit(port, pin) (port |= (1<<pin))
-#define ClrBit(port, pin) (port &= ~(1<<pin))
-#define ToggleBit(port, pin) (port ^= (1<<pin))
-#define TestBit(port, pin) (port & (1<<pin))
+#define SetBit(port, pin) (port |= (1 << pin))
+#define ClrBit(port, pin) (port &= ~(1 << pin))
+#define ToggleBit(port, pin) (port ^= (1 << pin))
+#define TestBit(port, pin) (port & (1 << pin))
 
 #define SOLO PC0
 #define RELE PD2
@@ -49,7 +49,7 @@
 //===============================================
 volatile uint8_t ovf_secs = 0x00;
 
-volatile uint8_t horas[3] = {0,0,0};
+volatile uint8_t horas[3] = {0, 0, 0};
 volatile bool refresh_horas = false;
 //===============================================
 //  PROTOTIPOS
@@ -76,9 +76,9 @@ int main()
     horas[1] = ler_DS3231(0x01);
     horas[2] = ler_DS3231(0x00);
 
-    for(;;)
+    for (;;)
     {
-        if(refresh_horas)
+        if (refresh_horas)
         {
             ClrBit(TIMSK1, OCIE1A);
 
@@ -92,14 +92,13 @@ int main()
             ToggleBit(TIMSK1, OCIE1A);
         }
 
-        if(horas[0] == 6 || horas[0] == 18)
+        if (horas[0] == 6 || horas[0] == 18)
         {
-            if(adc_read(SOLO) <= SOLO_SECO ) //IFs para verificar a umidade do solo
+            if (adc_read(SOLO) <= SOLO_SECO)
                 SetBit(PORTD, RELE);
             else
                 ClrBit(PORTD, RELE);
         }
-
     }
 
     cli();
@@ -112,7 +111,7 @@ int main()
 //===============================================
 /**
  * @brief Inicializacao dos pinos e protocolos
-*/
+ */
 void setup()
 {
     gpio_setup();
@@ -121,9 +120,9 @@ void setup()
 
     i2c_init();
 
-    //Desativa os Pinos RX e TX para serem usados
-    //como pinos normais, caso precise
-    UCSR0B |= 0x00; 
+    // Desativa os Pinos RX e TX para serem usados
+    // como pinos normais, caso precise
+    UCSR0B |= 0x00;
 
     timer1_setup();
 
@@ -132,9 +131,9 @@ void setup()
 
 /**
  * @brief Inicializacao dos pinos
- * 
+ *
  * @note Coloca os pinos PB5 e RELE(PD7) como OUTPUTs
-*/
+ */
 void gpio_setup()
 {
     SetBit(DDRB, PB5);
@@ -143,33 +142,33 @@ void gpio_setup()
 
     SetBit(DDRD, RELE);
 
-    //Inicialização da via de dados do LCD
+    // Inicialização da via de dados do LCD
     DDRD |= 0xF0;
 }
 
 /**
  * @brief Inicializacao do ADC
- * 
+ *
  * @note Ativa o ADC com o prescale de 16e6/128 e
- * referencia no AVCC/AREF 
-*/
+ * referencia no AVCC/AREF
+ */
 void adc_setup()
 {
     SetBit(ADCSRA, ADEN);
     SetBit(ADCSRA, ADPS2);
     SetBit(ADCSRA, ADPS1);
     SetBit(ADCSRA, ADPS0);
-        
+
     SetBit(ADMUX, REFS0);
 }
 
 /**
  * @brief Inicializa o Timer de 16 bits
- * 
+ *
  * @note O contador tem a frequencia de 16e6/1024
- * e com o modo de CTC com  interrupcao do 
+ * e com o modo de CTC com  interrupcao do
  * comparador do OCR1A como MAX
-*/
+ */
 void timer1_setup()
 {
     SetBit(TCCR1B, WGM12);
@@ -185,20 +184,21 @@ void timer1_setup()
  * @brief Funcao para pegar o valor do adc
  * @param pino Pino que deseja ler
  * @return Valor da conversao ADC em um valor de 16 bits
- * 
+ *
  * @note Retorna um valor de 16 bits pela facilidade,
  * ja que a resolucao do arduino e de 10 bits
-*/
+ */
 uint16_t adc_read(uint8_t pino)
 {
-    static uint8_t adc_LSB; 
+    static uint8_t adc_LSB;
     static uint8_t adc_MSB;
 
     ADMUX |= pino;
 
     SetBit(ADCSRA, ADSC);
 
-    while(!(ADCSRA &= ~(1<<ADIF)));
+    while (!(ADCSRA &= ~(1 << ADIF)))
+        ;
 
     SetBit(ADCSRA, ADIF);
 
@@ -207,21 +207,21 @@ uint16_t adc_read(uint8_t pino)
 
     SetBit(ADCSRA, ADSC);
 
-    return (adc_MSB<<8) | adc_LSB;
+    return (adc_MSB << 8) | adc_LSB;
 }
 
 /**
  * @brief Vetor de interrupcao para o estouro
  * do valor MAX do time1 (16 bits)
- * 
+ *
  * @note A cada 30 segundos, ele libera a atualizacao
  * das horas na main trocando a flag "refresh_horas"
-*/
+ */
 ISR(TIMER1_COMPA_vect)
 {
     ++ovf_secs;
-    
-    if(ovf_secs==30)
+
+    if (ovf_secs == 30)
     {
         refresh_horas = true;
         ovf_secs = 0;
