@@ -32,7 +32,7 @@
 
 #include "Utilitarios.c"
 
-#define BT PD0
+#define BT PD1
 #define POT PC1
 #define SOLO PC3
 #define RELE PD2
@@ -70,7 +70,6 @@ void rotina_principal();
 void rotina_config();
 
 ISR(TIMER1_COMPA_vect);
-ISR(PCINT1_vect);
 //===============================================
 //  MAIN
 //===============================================
@@ -88,6 +87,7 @@ int main()
     for (;;)
     {
         (*function_ptr)();
+        _delay_ms(250);
     }
 
     cli();
@@ -103,15 +103,15 @@ int main()
  */
 void setup()
 {
+    // Desativa os Pinos RX e TX para serem usados
+    // como pinos normais, caso precise
+    UCSR0B |= 0x00;
+
     gpio_setup();
 
     adc_setup();
 
     i2c_init();
-
-    // Desativa os Pinos RX e TX para serem usados
-    // como pinos normais, caso precise
-    UCSR0B |= 0x00;
 
     timer1_setup();
 
@@ -131,9 +131,6 @@ void gpio_setup()
 
     ClrBit(DDRD, BT);
     SetBit(PORTD, BT);
-
-    SetBit(PCICR, PCIE2);
-    SetBit(PCMSK2, PCINT17);
 
     // Inicialização da via de dados do LCD
     DDRD |= 0xF0;
@@ -245,9 +242,13 @@ void rotina_principal()
     escreve_LCD("PRINCIPAL");
     cmd_LCD(RETURN_HOME, 0);
 
-    if(!TestBit(PIND, PIND0))
+    if(!TestBit(PIND, PIND1))
     {
         cmd_LCD(CLEAR_DISPLAY, 0);
+
+        while(!TestBit(PIND, PIND1))
+            ;
+
         function_ptr = rotina_config;
     }
 
@@ -279,8 +280,15 @@ void rotina_config()
     escreve_LCD("CONF");
     cmd_LCD(RETURN_HOME, 0);
 
-    if(TestBit(PIND, PIND0))
+    if(!TestBit(PIND, PIND1))
+    {
+        cmd_LCD(CLEAR_DISPLAY, 0);
+
+        while(!TestBit(PIND, PIND1))
+            ;
+            
         function_ptr = rotina_principal;
+    }
 }
 
 /**
@@ -299,16 +307,4 @@ ISR(TIMER1_COMPA_vect)
         refresh_horas = true;
         ovf_secs = 0;
     }
-}
-
-ISR(PCINT2_vect)
-{
-    do
-    {
-
-        escreve_LCD("PCINT2_vect");
-        cmd_LCD(RETURN_HOME, 0);
-
-    } while (!TestBit(PIND, PIND1));
-    cmd_LCD(CLEAR_DISPLAY, 0);
 }
