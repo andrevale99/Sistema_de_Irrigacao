@@ -48,9 +48,6 @@ volatile uint8_t cnt = 0x00;
 volatile uint8_t horas[3] = {0, 0, 0};
 volatile bool refresh_horas = false;
 
-char str_adc[] = "0000";
-char str_horas[] = "000000";
-
 void (*function_ptr)(); // Ponteiro de função, quando haver troca de rotina
 //===============================================
 //  PROTOTIPOS
@@ -63,9 +60,6 @@ void adc_setup();
 uint16_t adc_read(uint8_t pino);
 
 void timer1_setup();
-
-void convert_to_str(uint32_t value, char str[], uint8_t len);
-void reset_string(char str[]);
 
 void rotina_principal();
 
@@ -205,33 +199,6 @@ uint16_t adc_read(uint8_t pino)
     return (adc_MSB << 8) | adc_LSB;
 }
 
-/**
- * @brief Converte o valor adc em um
- * vetor de char
- *
- * @param adc valor do adc
- */
-void convert_to_str(uint32_t value, char str[], uint8_t len)
-{
-    uint16_t i = 10;
-    uint8_t idx = len;
-    while (value != 0)
-    {
-        str[idx--] = (value % i) + '0';
-        value = value / i;
-    }
-}
-
-/**
- * @brief Reseta a string da conversao
- * do adc
- *
- * @param str vetor de char para resetar
- */
-void reset_string(char str[])
-{
-    memcpy(str, "0000", 4);
-}
 
 /**
  * @brief Rotina principal, somente atualiza o tempo e
@@ -240,11 +207,6 @@ void reset_string(char str[])
 void rotina_principal()
 {
     escreve_LCD("PRINCIPAL");
-    
-    cmd_LCD(PULAR_LINHA, 0);
-
-    convert_to_str(horas[2], str_horas, 6);
-    escreve_LCD(str_horas);
     cmd_LCD(RETURN_HOME, 0);
 
 
