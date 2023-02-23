@@ -63,6 +63,8 @@ void timer1_setup();
 
 void rotina_principal();
 
+void ler_relogio();
+
 ISR(TIMER1_COMPA_vect);
 //===============================================
 //  MAIN
@@ -72,10 +74,8 @@ int main()
     setup();
     sei();
 
-    horas[0] = ler_DS3231(0x02);
-    horas[1] = ler_DS3231(0x01);
-    horas[2] = ler_DS3231(0x00);
-
+    ler_relogio();
+    
     function_ptr = rotina_principal;
 
     for (;;)
@@ -214,9 +214,7 @@ void rotina_principal()
     {
         ClrBit(TIMSK1, OCIE1A);
 
-        horas[0] = ler_DS3231(0x02);
-        horas[1] = ler_DS3231(0x01);
-        horas[2] = ler_DS3231(0x00);
+        ler_relogio();
 
         refresh_horas = false;
 
@@ -231,6 +229,18 @@ void rotina_principal()
         else
             ClrBit(PORTD, RELE);
     }
+}
+
+/**
+ * @brief Função para Ler as horas no DS3231
+ * 
+ * @note serve mais para ficar menos pouluido
+*/
+void ler_relogio()
+{
+    horas[0] = ler_DS3231(0x02);
+    horas[1] = ler_DS3231(0x01);
+    horas[2] = ler_DS3231(0x00);
 }
 
 /**
