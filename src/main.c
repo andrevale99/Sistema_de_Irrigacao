@@ -33,7 +33,6 @@
 #include "Utilitarios.c"
 
 #define RELE PD0
-#define BT PD1
 #define POT PC0
 #define SOLO PC1
 
@@ -75,7 +74,7 @@ int main()
     sei();
 
     ler_relogio();
-    
+
     function_ptr = rotina_principal;
 
     for (;;)
@@ -122,9 +121,6 @@ void gpio_setup()
     SetBit(DDRB, PB1);
 
     SetBit(DDRD, RELE);
-
-    ClrBit(DDRD, BT);
-    SetBit(PORTD, BT);
 
     // Inicialização da via de dados do LCD
     DDRD |= 0xF0;
