@@ -48,7 +48,8 @@ volatile uint8_t cnt = 0x00;
 volatile uint8_t horas[3] = {0, 0, 0};
 volatile bool refresh_horas = false;
 
-char adc_string[] = "0000";
+char str_adc[] = "0000";
+char str_horas[] = "000000";
 
 void (*function_ptr)(); // Ponteiro de função, quando haver troca de rotina
 //===============================================
@@ -63,7 +64,7 @@ uint16_t adc_read(uint8_t pino);
 
 void timer1_setup();
 
-void convert_adc(uint16_t adc);
+void convert_to_str(uint32_t value, char str[], uint8_t len);
 void reset_string(char str[]);
 
 void rotina_principal();
@@ -210,14 +211,14 @@ uint16_t adc_read(uint8_t pino)
  *
  * @param adc valor do adc
  */
-void convert_adc(uint16_t adc)
+void convert_to_str(uint32_t value, char str[], uint8_t len)
 {
     uint16_t i = 10;
-    uint8_t idx = 3;
-    while (adc != 0)
+    uint8_t idx = len;
+    while (value != 0)
     {
-        adc_string[idx--] = (adc % i) + '0';
-        adc = adc / i;
+        str[idx--] = (value % i) + '0';
+        value = value / i;
     }
 }
 
@@ -239,7 +240,13 @@ void reset_string(char str[])
 void rotina_principal()
 {
     escreve_LCD("PRINCIPAL");
+    
+    cmd_LCD(PULAR_LINHA, 0);
+
+    convert_to_str(horas[2], str_horas, 6);
+    escreve_LCD(str_horas);
     cmd_LCD(RETURN_HOME, 0);
+
 
     if (refresh_horas)
     {
