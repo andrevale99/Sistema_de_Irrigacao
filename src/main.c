@@ -32,10 +32,10 @@
 
 #include "Utilitarios.c"
 
+#define RELE PD0
 #define BT PD1
-#define POT PC1
-#define SOLO PC3
-#define RELE PD2
+#define POT PC0
+#define SOLO PC1
 
 #define SOLO_SECO 500
 
@@ -242,16 +242,6 @@ void rotina_principal()
     escreve_LCD("PRINCIPAL");
     cmd_LCD(RETURN_HOME, 0);
 
-    if(!TestBit(PIND, PIND1))
-    {
-        cmd_LCD(CLEAR_DISPLAY, 0);
-
-        while(!TestBit(PIND, PIND1))
-            ;
-
-        function_ptr = rotina_config;
-    }
-
     if (refresh_horas)
     {
         ClrBit(TIMSK1, OCIE1A);
@@ -272,22 +262,6 @@ void rotina_principal()
             SetBit(PORTD, RELE);
         else
             ClrBit(PORTD, RELE);
-    }
-}
-
-void rotina_config()
-{
-    escreve_LCD("CONF");
-    cmd_LCD(RETURN_HOME, 0);
-
-    if(!TestBit(PIND, PIND1))
-    {
-        cmd_LCD(CLEAR_DISPLAY, 0);
-
-        while(!TestBit(PIND, PIND1))
-            ;
-            
-        function_ptr = rotina_principal;
     }
 }
 
