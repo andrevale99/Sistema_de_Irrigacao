@@ -67,7 +67,6 @@ void convert_adc(uint16_t adc);
 void reset_string(char str[]);
 
 void rotina_principal();
-void rotina_config();
 
 ISR(TIMER1_COMPA_vect);
 //===============================================
