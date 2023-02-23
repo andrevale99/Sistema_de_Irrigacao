@@ -8,7 +8,7 @@
  * de um jardim utlizando a programacao em C e o microcontrolador
  * AVR Atmega328p
  *
- * @note A parte da programacao do RTC e do LCD foram baseados no livro
+ * @note A parte da programacao do RTC foi baseado no livro
  * "AVR e Arduino: Tecnicas de Projeto" de Charles Borges de Lima
  *  e Marco V. M. Villaca
  *
@@ -28,7 +28,6 @@
 
 #include "i2c_lib.h"
 #include "ds3231.h"
-#include "LCD.h"
 
 #include "Utilitarios.c"
 
@@ -107,8 +106,6 @@ void setup()
     i2c_init();
 
     timer1_setup();
-
-    inic_LCD_4bits();
 }
 
 /**
@@ -122,8 +119,6 @@ void gpio_setup()
 
     SetBit(DDRD, RELE);
 
-    // Inicialização da via de dados do LCD
-    DDRD |= 0xF0;
 }
 
 /**
@@ -202,10 +197,6 @@ uint16_t adc_read(uint8_t pino)
  */
 void rotina_principal()
 {
-    escreve_LCD("PRINCIPAL");
-    cmd_LCD(RETURN_HOME, 0);
-
-
     if (refresh_horas)
     {
         ClrBit(TIMSK1, OCIE1A);
